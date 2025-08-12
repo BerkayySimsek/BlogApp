@@ -1,0 +1,1 @@
+Controllers düzenlenecek ve sadeleştirilecek.
