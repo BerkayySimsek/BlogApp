@@ -2281,3 +2281,4 @@ C:\Users\berka\OneDrive\Masaüstü\Software\BlogApp\BlogApp\obj\Debug\net9.0\com
 C:\Users\berka\OneDrive\Masaüstü\Software\BlogApp\BlogApp\obj\Debug\net9.0\compressed\i1p881mkjf-cj4ojh8vq2.gz
 C:\Users\berka\OneDrive\Masaüstü\Software\BlogApp\BlogApp\obj\Debug\net9.0\compressed\etadewnp7m-tpa8tcwxyn.gz
 C:\Users\berka\OneDrive\Masaüstü\Software\BlogApp\BlogApp\obj\Debug\net9.0\compressed\w2bw8qccko-stupnzguc3.gz
+C:\Users\berka\OneDrive\Masaüstü\Software\BlogApp\blogapp\obj\Debug\net9.0\BlogApp.sourcelink.json

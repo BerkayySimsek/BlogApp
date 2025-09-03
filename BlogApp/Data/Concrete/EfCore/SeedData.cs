@@ -46,6 +46,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         new Entity.Post
                         {
                             Title = "Asp.net core",
+                            Description = "Asp.net core dersleri",
                             Content = "Asp.net core dersleri",
                             Url = "aspnet-core",
                             IsActive = true,
@@ -62,6 +63,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         new Entity.Post
                         {
                             Title = "Php",
+                            Description = "Php dersleri",
                             Content = "Php dersleri",
                             Url = "php",
                             IsActive = true,
@@ -73,6 +75,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         new Entity.Post
                         {
                             Title = "Django",
+                            Description = "Django dersleri",
                             Content = "Django dersleri",
                             Url = "django",
                             IsActive = true,
@@ -83,6 +86,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         }, new Entity.Post
                         {
                             Title = "React",
+                            Description = "React dersleri",
                             Content = "React dersleri",
                             Url = "react",
                             IsActive = true,
@@ -93,6 +97,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         }, new Entity.Post
                         {
                             Title = "Angular",
+                            Description = "Angular dersleri",
                             Content = "Angular dersleri",
                             Url = "angular",
                             IsActive = true,
@@ -103,6 +108,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         }, new Entity.Post
                         {
                             Title = "Web Tasarım",
+                            Description = "Web Tasarım dersleri",
                             Content = "Web Tasarım dersleri",
                             Url = "web-tasarim",
                             IsActive = true,
