@@ -9,7 +9,7 @@
             <thead>
                 <tr>
                     <th style="width: 200px;">Image</th>
-                    <th>Id</th>
+                    <th>Title</th>
                     <th>IsActive</th>
                     <th style="width: 125px;"></th>
                 </tr>
@@ -22,8 +22,8 @@
                         <td>@item.Title</td>
                         <td>@item.IsActive</td>
                         <td>
-                            <a href="" class="btn btn-sm btn-primary">Edit</a>
-                            <a href="" class="btn btn-sm btn-danger">Delete</a>
+                            <a href="/posts/edit/@item.PostId" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="/posts/delete/@item.PostId" class="btn btn-sm btn-danger">Delete</a>
                         </td>
                     </tr>
                 }
