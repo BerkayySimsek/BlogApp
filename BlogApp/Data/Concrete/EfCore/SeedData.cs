@@ -23,8 +23,7 @@ namespace BlogApp.Data.Concrete.EfCore
                         new Entity.Tag { Text = "backend", Url = "backend", Color = TagColors.info },
                         new Entity.Tag { Text = "frontend", Url = "frontend", Color = TagColors.danger },
                         new Entity.Tag { Text = "fullstack", Url = "fullstack", Color = TagColors.success },
-                        new Entity.Tag { Text = "php", Url = "php", Color = TagColors.secondary },
-                        new Entity.Tag { Text = "c#", Url = "c#", Color = TagColors.primary }
+                        new Entity.Tag { Text = "php", Url = "php", Color = TagColors.secondary }
                     );
 
                     context.SaveChanges();
