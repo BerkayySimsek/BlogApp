@@ -1,1 +1,1 @@
-Service eklenecek. Controller sadeleştirilecek.
+
