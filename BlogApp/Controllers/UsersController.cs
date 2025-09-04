@@ -1,27 +1,24 @@
 using System.Security.Claims;
-using BlogApp.Data.Abstract;
 using BlogApp.Models;
-using BlogApp.Entity;
+using BlogApp.Services.Abstract;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace BlogApp.Contollers
+namespace BlogApp.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserService _userService;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(IUserService userService)
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         public IActionResult Login()
         {
-            if (User.Identity!.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated ?? false)
             {
                 return RedirectToAction("Index", "Posts");
             }
@@ -38,30 +35,15 @@ namespace BlogApp.Contollers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userRepository.Users.FirstOrDefaultAsync(x => x.UserName == model.UserName || x.Email == model.Email);
-                if (user == null)
+                var success = await _userService.RegisterAsync(model);
+                if (success)
                 {
-                    _userRepository.CreateUser(new User
-                    {
-                        UserName = model.UserName,
-                        Name = model.Name,
-                        Email = model.Email,
-                        Password = model.Password,
-                        Image = "avatar.jpg"
-                    });
                     return RedirectToAction("Login");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Username or Email is already in use.");
-                }
+
+                ModelState.AddModelError("", "Username or Email is already in use.");
             }
             return View(model);
-        }
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
         }
 
         [HttpPost]
@@ -69,23 +51,27 @@ namespace BlogApp.Contollers
         {
             if (ModelState.IsValid)
             {
-                var isUser = _userRepository.Users.FirstOrDefault(x => x.Email == model.Email && x.Password == model.Password);
+                var user = await _userService.AuthenticateAsync(model.Email, model.Password);
 
-                if (isUser != null)
-                {
-                    var userClaims = new List<Claim>();
+                if (user != null)
+                {                
+                    var userClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                        new Claim(ClaimTypes.Name, user.UserName ?? ""),
+                        new Claim(ClaimTypes.GivenName, user.Name ?? ""),
+                        new Claim(ClaimTypes.UserData, user.Image ?? "")
+                    };
 
-                    userClaims.Add(new Claim(ClaimTypes.NameIdentifier, isUser.UserId.ToString()));
-                    userClaims.Add(new Claim(ClaimTypes.Name, isUser.UserName ?? ""));
-                    userClaims.Add(new Claim(ClaimTypes.GivenName, isUser.Name ?? ""));
-                    userClaims.Add(new Claim(ClaimTypes.UserData, isUser.Image ?? ""));
-
-                    if (isUser.Email == "berkayysimsekk@gmail.com")
+                    if (user.Email == "berkayysimsekk@gmail.com")
                     {
                         userClaims.Add(new Claim(ClaimTypes.Role, "admin"));
                     }
 
-                    var claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        userClaims,
+                        CookieAuthenticationDefaults.AuthenticationScheme
+                    );
 
                     var authProperties = new AuthenticationProperties
                     {
@@ -93,40 +79,41 @@ namespace BlogApp.Contollers
                     };
 
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
                     await HttpContext.SignInAsync(
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties
-                        );
+                    );
 
-                    return RedirectToAction("Index", "posts");
+                    return RedirectToAction("Index", "Posts");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Kullanıcı adı veya şifre yanlış.");
-                }
+
+                ModelState.AddModelError("", "Kullanıcı adı veya şifre yanlış.");
             }
 
             return View(model);
         }
 
-        public IActionResult Profile(string username)
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
+
+        public async Task<IActionResult> Profile(string username)
         {
             if (string.IsNullOrEmpty(username))
             {
                 return NotFound();
             }
-            var user = _userRepository
-                .Users
-                .Include(x => x.Posts)
-                .Include(x => x.Comments)
-                .ThenInclude(x => x.Post)
-                .FirstOrDefault(x => x.UserName == username);
-            if (user==null)
+
+            var user = await _userService.GetUserProfileAsync(username);
+
+            if (user == null)
             {
                 return NotFound();
             }
+
             return View(user);
         }
     }
