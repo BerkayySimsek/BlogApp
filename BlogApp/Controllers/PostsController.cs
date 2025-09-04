@@ -10,17 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApp.Contollers
 {
-    public class PostsController : Controller
+    public class PostsController(IPostRepository postRepository, ICommentRepository commentRepository, ITagRepository tagRepository) : Controller
     {
 
-        private IPostRepository _postRepository;
-        private ICommentRepository _commentRepository;
-
-        public PostsController(IPostRepository postRepository, ICommentRepository commentRepository)
-        {
-            _postRepository = postRepository;
-            _commentRepository = commentRepository;
-        }
+        private IPostRepository _postRepository = postRepository;
+        private ICommentRepository _commentRepository = commentRepository;
+        private ITagRepository _tagRepository = tagRepository;
 
         public async Task<IActionResult> Index(string tag)
         {
@@ -135,11 +130,14 @@ namespace BlogApp.Contollers
             {
                 return NotFound();
             }
-            var post = _postRepository.Posts.FirstOrDefault(i => i.PostId == id);
+            var post = _postRepository.Posts.Include(i=>i.Tags).FirstOrDefault(i => i.PostId == id);
             if (post == null)
             {
                 return NotFound();
             }
+
+            ViewBag.Tags = _tagRepository.Tags.ToList();
+
             return View(new PostCreateViewModel
             {
                 PostId = post.PostId,
@@ -147,7 +145,8 @@ namespace BlogApp.Contollers
                 Description = post.Description,
                 Content = post.Content,
                 Url = post.Url,
-                IsActive = post.IsActive
+                IsActive = post.IsActive,
+                Tags = post.Tags
             });
         }
 
